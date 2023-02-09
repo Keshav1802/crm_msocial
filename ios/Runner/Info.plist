@@ -31,10 +31,18 @@
 	<key>UISupportedInterfaceOrientations</key>
     <key>NSAppTransportSecurity</key>
     <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-        <key>NSAllowsArbitraryLoadsInWebContent</key>
-        <true/>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>www.leads.mothering.com</key>
+        <dict>
+          <!-- add this key to allow standard HTTP requests, thus negating the ATS -->
+          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+          <!-- add this key to specify the minimum TLS version to accept -->
+          <key>NSTemporaryExceptionMinimumTLSVersion</key>
+          <string>TLSv1.1</string>
+        </dict>
+      </dict>
     </dict>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
