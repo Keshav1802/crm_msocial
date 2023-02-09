@@ -29,19 +29,14 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
-	<key>NSAppTransportSecurity</key>
+    <key>io.flutter.embedded_views_preview</key><string>yes</string>
+    <key>NSAppTransportSecurity</key>
     <dict>
-            <key>NSAllowsArbitraryLoads</key>
-            <true/>
-           <key>NSExceptionDomains</key>
-           <dict>
-               <key>localhost</key>
-               <dict>
-                   <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                   <true/>
-               </dict>
-           </dict>
-       </dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+    </dict>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late InAppWebViewController _webViewController;
-  final url = "https://leads.mothering.in";
+  final url = "http://leads.mothering.in";
   double progress = 0;
 
   @override
