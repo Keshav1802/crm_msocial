@@ -30,12 +30,23 @@
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<key>NSAppTransportSecurity</key>
+      <dict>
+        <key>NSAllowsArbitraryLoads</key>
+      	<true/>
+      </dict>
+      <key>CFBundleURLTypes</key>
+      <array>
         <dict>
-            <key>NSAllowsArbitraryLoads</key>
-            <true/>
-            <key>NSAllowsArbitraryLoadsInWebContent</key>
-            <true/>
-        </dict>
+      	    <key>CFBundleURLName</key>
+      	        <string>com.mothering.myapp</string>
+      	</dict>
+      	<dict>
+      	    <key>CFBundleURLSchemes</key>
+      	     <array>
+      	        <string>MyApp</string>
+      	     </array>
+      	</dict>
+      </array>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
