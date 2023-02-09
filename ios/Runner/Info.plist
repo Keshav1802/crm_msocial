@@ -31,6 +31,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<key>NSAppTransportSecurity</key>
         <dict>
+        <key>NSExceptionMinimumTLSVersion</key>
+           <string>TLSv1.0</string>
             <key>NSAllowsArbitraryLoads</key>
             <true/>
             <key>NSAllowsArbitraryLoadsInWebContent</key>
