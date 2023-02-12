@@ -74,5 +74,9 @@
         </dict>
         <key>NSPhotoLibraryAddUsageDescription</key>
         <string>This will use to get or pick image or files from gallery.</string>
+        <key>NSCameraUsageDescription</key>
+        <string>This app requires access to the Camera to capture the photo from the camera.</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string> This require listens for speech on the device microphone on your request for voice search.</string>
 	</dict>
 </plist>
