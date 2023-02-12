@@ -155,145 +155,41 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
     ));
     return WillPopScope(
       onWillPop: () => _exitApp(context),
-      child: !flag
-          ? Container(
-        color: Colors.transparent,
-        child: InAppWebView(
-          key: webViewKey,
-          initialData: InAppWebViewInitialData(
-              data: url, mimeType: 'text/html', encoding: "utf8"),
-          initialOptions: InAppWebViewGroupOptions(
-              crossPlatform: InAppWebViewOptions(
-                  useShouldOverrideUrlLoading: true,
-                  mediaPlaybackRequiresUserGesture: true,
-                  useOnDownloadStart: true,
-                  cacheEnabled: true,
-                  userAgent:
-                  "Mozilla/5.0 (Linux; Android 9; LG-H870 Build/PKQ1.190522.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36",
-                  javaScriptEnabled: true,
-                  transparentBackground: true),
-              android: AndroidInAppWebViewOptions(
-                  useHybridComposition: true, defaultFontSize: 32),
-              ios: IOSInAppWebViewOptions(
-                allowsInlineMediaPlayback: true,
-              )),
-          pullToRefreshController: _pullToRefreshController,
-          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-            Factory<OneSequenceGestureRecognizer>(
-                  () => EagerGestureRecognizer(),
-            ),
-          },
-          onWebViewCreated: (controller) {
-            _webViewController = controller;
-          },
-          onScrollChanged: (controller, x, y) async {
-            int currentScrollY = y;
-
-            if (currentScrollY > _previousScrollY) {
-              _previousScrollY = currentScrollY;
-              if (!context
-                  .read<NavigationBarProvider>()
-                  .animationController
-                  .isAnimating) {
-                context
-                    .read<NavigationBarProvider>()
-                    .animationController
-                    .forward();
-              }
-            } else {
-              _previousScrollY = currentScrollY;
-
-              if (!context
-                  .read<NavigationBarProvider>()
-                  .animationController
-                  .isAnimating) {
-                context
-                    .read<NavigationBarProvider>()
-                    .animationController
-                    .reverse();
-              }
-            }
-          },
-          onLoadStart: (controller, url) {
-            setState(() {
-              this.url = url.toString();
-              // isInitialLoaded = false;
-            });
-          },
-          onLoadStop: (controller, url) async {
-            _pullToRefreshController.endRefreshing();
-            //  _webViewController!
-            //      _webViewController!.injectCSSFileFromUrl(urlFile: urlFile)
-          },
-          onLoadError: (controller, url, code, message) {
-            _pullToRefreshController.endRefreshing();
-
-            setState(() {
-              slowInternetPage = true;
-            });
-          },
-          onLoadHttpError: (controller, url, statusCode, description) {
-            setState(() {
-              showErrorPage = true;
-            });
-          },
-          onProgressChanged: (controller, progress) {
-            if (progress == 100) {
-              _pullToRefreshController.endRefreshing();
-            }
-            setState(() {
-              this.progress = progress / 100;
-              // urlController.text = this.url;
-            });
-          },
-          shouldOverrideUrlLoading: (controller, navigationAction) async {
-            return NavigationActionPolicy.ALLOW;
-          },
-        ),
-      )
-          : Stack(
-        children: [
-          _validURL
-              ? InAppWebView(
+      child: Scaffold(
+        body: !flag
+            ? Container(
+          color: Colors.transparent,
+          child: InAppWebView(
             key: webViewKey,
-            // initialFile: 'assets/icons/test.html',
-
-            initialUrlRequest:
-            URLRequest(url: Uri.parse(url)),
-            initialOptions: options,
+            initialData: InAppWebViewInitialData(
+                data: url, mimeType: 'text/html', encoding: "utf8"),
+            initialOptions: InAppWebViewGroupOptions(
+                crossPlatform: InAppWebViewOptions(
+                    useShouldOverrideUrlLoading: true,
+                    mediaPlaybackRequiresUserGesture: true,
+                    useOnDownloadStart: true,
+                    cacheEnabled: true,
+                    userAgent:
+                    "Mozilla/5.0 (Linux; Android 9; LG-H870 Build/PKQ1.190522.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36",
+                    javaScriptEnabled: true,
+                    transparentBackground: true),
+                android: AndroidInAppWebViewOptions(
+                    useHybridComposition: true, defaultFontSize: 32),
+                ios: IOSInAppWebViewOptions(
+                  allowsInlineMediaPlayback: true,
+                )),
             pullToRefreshController: _pullToRefreshController,
-            gestureRecognizers: <
-                Factory<OneSequenceGestureRecognizer>>{
+            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
               Factory<OneSequenceGestureRecognizer>(
                     () => EagerGestureRecognizer(),
               ),
             },
-            onWebViewCreated: (controller) async {
+            onWebViewCreated: (controller) {
               _webViewController = controller;
-              //below code for custom tab
-              // browser.open(
-              //     url: Uri.parse(widget.url),
-              //     options: ChromeSafariBrowserClassOptions(
-              //         android: AndroidChromeCustomTabsOptions(
-              //             enableUrlBarHiding: true,
-              //             instantAppsEnabled: false,
-              //             keepAliveEnabled: true,
-              //             addDefaultShareMenuItem: false),
-              //         ios: IOSSafariOptions(
-              //             barCollapsingEnabled: true)));
-
-              await cookieManager.setCookie(
-                url: Uri.parse(url),
-                name: "myCookie",
-                value: "myValue",
-                // domain: ".flutter.dev",
-                expiresDate: expiresDate,
-                isHttpOnly: false,
-                isSecure: true,
-              );
             },
             onScrollChanged: (controller, x, y) async {
               int currentScrollY = y;
+
               if (currentScrollY > _previousScrollY) {
                 _previousScrollY = currentScrollY;
                 if (!context
@@ -319,367 +215,473 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
                 }
               }
             },
-
-            onLoadStart: (controller, url) async {
-              print('----loadstart---- $url');
-
-              // controller.loadUrl(
-              //     urlRequest: URLRequest(
-              //         url: Uri.parse(
-              //             'file://storage/emulated/0/Download/myArchive.mht')));
-              setState(() {
-                isLoading = true;
-              });
-              if (Platform.isAndroid) {
-                List<Cookie> cookies =
-                await cookieManager.getCookies(url: url!);
-                // print('---android cookies---$cookies');
-              }
-              if (Platform.isIOS) {
-                List<Cookie> iosCookies =
-                await cookieManager.ios.getAllCookies();
-                // print('---ios cookies---$iosCookies');
-              }
+            onLoadStart: (controller, url) {
               setState(() {
                 this.url = url.toString();
+                // isInitialLoaded = false;
               });
             },
             onLoadStop: (controller, url) async {
               _pullToRefreshController.endRefreshing();
+              //  _webViewController!
+              //      _webViewController!.injectCSSFileFromUrl(urlFile: urlFile)
+            },
+            onLoadError: (controller, url, code, message) {
+              _pullToRefreshController.endRefreshing();
 
               setState(() {
-                this.url = url.toString();
-                isLoading = false;
-              });
-
-              // Removes header and footer from page
-              if (hideHeader == true) {
-                _webViewController!
-                    .evaluateJavascript(
-                    source: "javascript:(function() { " +
-                        "var head = document.getElementsByTagName('header')[0];" +
-                        "head.parentNode.removeChild(head);" +
-                        "})()")
-                    .then((value) => debugPrint(
-                    'Page finished loading Javascript'))
-                    .catchError(
-                        (onError) => debugPrint('$onError'));
-              }
-              if (hideFooter == true) {
-                _webViewController!
-                    .evaluateJavascript(
-                    source: "javascript:(function() { " +
-                        "var footer = document.getElementsByTagName('footer')[0];" +
-                        "footer.parentNode.removeChild(footer);" +
-                        "})()")
-                    .then((value) => debugPrint(
-                    'Page finished loading Javascript'))
-                    .catchError(
-                        (onError) => debugPrint('$onError'));
-              }
-            },
-            onLoadError: (controller, url, code, message) async {
-              _pullToRefreshController.endRefreshing();
-              print('---load error----$url');
-              print('---load error----$code');
-              setState(() {
-                if (code == 2) {
-
-                  noInternet = true;
-
-                }
-                if (code != 102) {
-                  slowInternetPage = true;
-                }
-                isLoading = false;
+                slowInternetPage = true;
               });
             },
-
-            onLoadHttpError:
-                (controller, url, statusCode, description) {
-              _pullToRefreshController.endRefreshing();
-              print('---load http error----$description');
+            onLoadHttpError: (controller, url, statusCode, description) {
               setState(() {
                 showErrorPage = true;
-                isLoading = false;
               });
             },
-            androidOnGeolocationPermissionsShowPrompt:
-                (controller, origin) async {
-              await Permission.location.request();
-            },
-            androidOnPermissionRequest:
-                (controller, origin, resources) async {
-              if (resources.contains(
-                  'android.webkit.resource.AUDIO_CAPTURE')) {
-                await Permission.microphone.request();
-              }
-              if (resources.contains(
-                  'android.webkit.resource.VIDEO_CAPTURE')) {
-                await Permission.camera.request();
-              }
-
-              return PermissionRequestResponse(
-                  resources: resources,
-                  action: PermissionRequestResponseAction.GRANT);
-            },
-
             onProgressChanged: (controller, progress) {
               if (progress == 100) {
                 _pullToRefreshController.endRefreshing();
               }
               setState(() {
                 this.progress = progress / 100;
+                // urlController.text = this.url;
               });
             },
-            shouldOverrideUrlLoading:
-                (controller, navigationAction) async {
-              var url = navigationAction.request.url.toString();
-              var uri = Uri.parse(url);
-
-              if (Platform.isIOS && url.contains("geo")) {
-                var newUrl = url.replaceFirst(
-                    'geo://', 'http://maps.apple.com/');
-
-                if (await canLaunchUrl(Uri.parse(newUrl))) {
-                  await launch(newUrl);
-                  return NavigationActionPolicy.CANCEL;
-                } else {
-                  throw 'Could not launch $newUrl';
-                }
-              } else if (url.contains("tel:") ||
-                  url.contains("mailto:") ||
-                  url.contains("play.google.com") ||
-                  url.contains("maps") ||
-                  url.contains("messenger.com")) {
-                url = Uri.encodeFull(url);
-                try {
-                  if (await canLaunchUrl(uri)) {
-                    launchUrl(uri);
-                  } else {
-                    launchUrl(uri);
-                  }
-                  return NavigationActionPolicy.CANCEL;
-                } catch (e) {
-                  launchUrl(uri);
-                  return NavigationActionPolicy.CANCEL;
-                }
-              } else if (![
-                "http",
-                "https",
-                "file",
-                "chrome",
-                "data",
-                "javascript",
-                "about"
-              ].contains(uri.scheme)) {
-                if (await canLaunchUrl(uri)) {
-                  // Launch the App
-                  await launchUrl(
-                    uri,
-                  );
-                  // and cancel the request
-                  return NavigationActionPolicy.CANCEL;
-                }
-              }
-
+            shouldOverrideUrlLoading: (controller, navigationAction) async {
               return NavigationActionPolicy.ALLOW;
             },
+          ),
+        )
+            : Stack(
+          children: [
+            _validURL
+                ? InAppWebView(
+              key: webViewKey,
+              // initialFile: 'assets/icons/test.html',
 
-            onDownloadStartRequest:
-                (controller, downloadStartRrquest) async {
-              requestPermission().then((status) async {
-                String url = downloadStartRrquest.url.toString();
-                print(url.toString());
-                if (status == true) {
-                  try {
-                    Dio dio = Dio();
-                    String dirloc = '';
-                    if (Platform.isAndroid) {
-                      dirloc = (await getExternalStorageDirectory())!.path;
-                    } else if (Platform.isIOS) {
-                      dirloc = (await getApplicationDocumentsDirectory()).path;
-                    }
-                    print(dirloc);
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(
-                      content: const Text('Downloading file..'),
-                    ));
-                    try {
-                      String downloadName = "sample";
-                      String fullPath = '$dirloc/$downloadName.pdf';
-                      String fileSaved = '$dirloc/$downloadName.pdf/';
-                      FileUtils.mkdir([fullPath]);
-                      print(fullPath);
-                      await dio.download(
-                          url, fileSaved ,
-                          onReceiveProgress: (receivedBytes, totalBytes) async {
-                            received = ((receivedBytes / totalBytes) * 100);
-                            setState(() {
-                              progress =
-                              (((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + '%') as double;
-                            });
+              initialUrlRequest:
+              URLRequest(url: Uri.parse(url)),
+              initialOptions: options,
+              pullToRefreshController: _pullToRefreshController,
+              gestureRecognizers: <
+                  Factory<OneSequenceGestureRecognizer>>{
+                Factory<OneSequenceGestureRecognizer>(
+                      () => EagerGestureRecognizer(),
+                ),
+              },
+              onWebViewCreated: (controller) async {
+                _webViewController = controller;
+                //below code for custom tab
+                // browser.open(
+                //     url: Uri.parse(widget.url),
+                //     options: ChromeSafariBrowserClassOptions(
+                //         android: AndroidChromeCustomTabsOptions(
+                //             enableUrlBarHiding: true,
+                //             instantAppsEnabled: false,
+                //             keepAliveEnabled: true,
+                //             addDefaultShareMenuItem: false),
+                //         ios: IOSSafariOptions(
+                //             barCollapsingEnabled: true)));
 
-                            if (received == 100.0) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('Files has been downloaded to $fileSaved'),
-                              ));
-
-                              // if (url.contains('.pdf')) {
-                              //   Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //       builder: (context) => DownloadViewer(
-                              //         title: title!,
-                              //         filePath: InfixApi().root + url,
-                              //       ),
-                              //     ),
-                              //   );
-                              // } else if (url.contains('.jpg') ||
-                              //     url.contains('.png') ||
-                              //     url.contains('.jpeg')) {
-                              //   Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //       builder: (context) => Utils.documentViewer(InfixApi().root + url, context),
-                              //     ),
-                              //   );
-                              // }
-                              // else {
-                              //   Utils.showToast('No file exists');
-                              //   // var file = await DefaultCacheManager()
-                              //   //     .getSingleFile(InfixApi().root + url);
-                              //   // // OpenFile.open(file.path);
-                              //   // Navigator.push(
-                              //   //   context,
-                              //   //   MaterialPageRoute(
-                              //   //     builder: (context) => Utils.fullScreenImageView(file.path),
-                              //   //   ),
-                              //   // );
-                              // }
-                            }
-                          });
-                    } catch (e) {
-                      print(e);
-                    }
-                    //     File file = File(url.toString());
-                    //     String fileName = url.toString().substring(
-                    //         url.toString().lastIndexOf('/') + 1,
-                    //         url.toString().lastIndexOf('?'));
-                    //
-                    //     String savePath = await getFilePath(fileName);
-                    //     print(savePath);
-                    //     ScaffoldMessenger.of(context)
-                    //         .showSnackBar(SnackBar(
-                    //       content: const Text('Downloading file..'),
-                    //     ));
-                    //     await dio.download(url.toString(), savePath,
-                    //         onReceiveProgress: (rec, total) {
-                    //       // _bottomSheetController.setState!(() {
-                    //       //   downloading = true;
-                    //       //   progress = (rec / total);
-                    //       //   downloadingStr = downloadingStartString;
-                    //       // });
-                    //     });
-                    //
-                    //     ScaffoldMessenger.of(context)
-                    //         .showSnackBar(SnackBar(
-                    //       content: const Text('Download Complete'),
-                    //     ));
-                  } on Exception catch (e) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(
-                      content: const Text('Downloading failed'),
-                    ));
+                await cookieManager.setCookie(
+                  url: Uri.parse(url),
+                  name: "myCookie",
+                  value: "myValue",
+                  // domain: ".flutter.dev",
+                  expiresDate: expiresDate,
+                  isHttpOnly: false,
+                  isSecure: true,
+                );
+              },
+              onScrollChanged: (controller, x, y) async {
+                int currentScrollY = y;
+                if (currentScrollY > _previousScrollY) {
+                  _previousScrollY = currentScrollY;
+                  if (!context
+                      .read<NavigationBarProvider>()
+                      .animationController
+                      .isAnimating) {
+                    context
+                        .read<NavigationBarProvider>()
+                        .animationController
+                        .forward();
                   }
-                  //   // if (await canLaunchUrl(url)) {
-                  //   //   // Launch the App
-                  //   //   await launchUrl(url,
-                  //   //       mode: LaunchMode.platformDefault);
-                  //
-                  //   //   // and cancel the request
-                  //   // }
-                  // } else {
-                  //   ScaffoldMessenger.of(context)
-                  //       .showSnackBar(SnackBar(
-                  //     content: const Text('Permision denied'),
-                  //   ));
-                  // }
-                }});
-            },
-            onUpdateVisitedHistory:
-                (controller, url, androidIsReload) {
-              print('--from onUpdateVisitedHistory--$url');
+                } else {
+                  _previousScrollY = currentScrollY;
 
-              // setState(() {
-              //   this.url = url.toString();
-              // });
-            },
-            onCloseWindow: (controller) async {
-              //   _webViewController!.evaluateJavascript(source:'document.cookie = "token=$token"');
-            },
-            onConsoleMessage: (controller, message) {
-              print('---console---$message');
-            },
-          )
-              : Center(
-              child: Text(
-                'Url is not valid',
-                style: Theme.of(context).textTheme.subtitle1,
-              )),
-          isLoading
-              ? Center(
-            child: CircularProgressIndicator(),
-          )
-              : SizedBox(height: 0, width: 0),
-          noInternet
-              ? Center(
-            child: NoInternetWidget(),
-          )
-              : SizedBox(height: 0, width: 0),
-          showErrorPage
-              ? Center(
-              child: NotFound(
-                  _webViewController!,
-                  url,
-                  CustomStrings.pageNotFound1,
-                  CustomStrings.pageNotFound2))
-              : SizedBox(height: 0, width: 0),
-          slowInternetPage
-              ? Center(
-              child: NotFound(
-                  _webViewController!,
-                  url,
-                  CustomStrings.incorrectURL1,
-                  CustomStrings.incorrectURL2))
-              : SizedBox(height: 0, width: 0),
-          progress < 1.0
-              ? SizeTransition(
-            sizeFactor: animation,
-            axis: Axis.horizontal,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 5.0,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent
-                // gradient: LinearGradient(
-                //   colors: [
-                //     Theme.of(context).progressIndicatorTheme.color!,
-                //     Theme.of(context)
-                //         .progressIndicatorTheme
-                //         .refreshBackgroundColor!,
-                //     Theme.of(context)
-                //         .progressIndicatorTheme
-                //         .linearTrackColor!,
-                //   ],
-                //   stops: const [0.1, 1.0, 0.1],
-                // ),
+                  if (!context
+                      .read<NavigationBarProvider>()
+                      .animationController
+                      .isAnimating) {
+                    context
+                        .read<NavigationBarProvider>()
+                        .animationController
+                        .reverse();
+                  }
+                }
+              },
+
+              onLoadStart: (controller, url) async {
+                print('----loadstart---- $url');
+
+                // controller.loadUrl(
+                //     urlRequest: URLRequest(
+                //         url: Uri.parse(
+                //             'file://storage/emulated/0/Download/myArchive.mht')));
+                setState(() {
+                  isLoading = true;
+                });
+                if (Platform.isAndroid) {
+                  List<Cookie> cookies =
+                  await cookieManager.getCookies(url: url!);
+                  // print('---android cookies---$cookies');
+                }
+                if (Platform.isIOS) {
+                  List<Cookie> iosCookies =
+                  await cookieManager.ios.getAllCookies();
+                  // print('---ios cookies---$iosCookies');
+                }
+                setState(() {
+                  this.url = url.toString();
+                });
+              },
+              onLoadStop: (controller, url) async {
+                _pullToRefreshController.endRefreshing();
+
+                setState(() {
+                  this.url = url.toString();
+                  isLoading = false;
+                });
+
+                // Removes header and footer from page
+                if (hideHeader == true) {
+                  _webViewController!
+                      .evaluateJavascript(
+                      source: "javascript:(function() { " +
+                          "var head = document.getElementsByTagName('header')[0];" +
+                          "head.parentNode.removeChild(head);" +
+                          "})()")
+                      .then((value) => debugPrint(
+                      'Page finished loading Javascript'))
+                      .catchError(
+                          (onError) => debugPrint('$onError'));
+                }
+                if (hideFooter == true) {
+                  _webViewController!
+                      .evaluateJavascript(
+                      source: "javascript:(function() { " +
+                          "var footer = document.getElementsByTagName('footer')[0];" +
+                          "footer.parentNode.removeChild(footer);" +
+                          "})()")
+                      .then((value) => debugPrint(
+                      'Page finished loading Javascript'))
+                      .catchError(
+                          (onError) => debugPrint('$onError'));
+                }
+              },
+              onLoadError: (controller, url, code, message) async {
+                _pullToRefreshController.endRefreshing();
+                print('---load error----$url');
+                print('---load error----$code');
+                setState(() {
+                  if (code == 2) {
+
+                    noInternet = true;
+
+                  }
+                  if (code != 102) {
+                    slowInternetPage = true;
+                  }
+                  isLoading = false;
+                });
+              },
+
+              onLoadHttpError:
+                  (controller, url, statusCode, description) {
+                _pullToRefreshController.endRefreshing();
+                print('---load http error----$description');
+                setState(() {
+                  showErrorPage = true;
+                  isLoading = false;
+                });
+              },
+              androidOnGeolocationPermissionsShowPrompt:
+                  (controller, origin) async {
+                await Permission.location.request();
+              },
+              androidOnPermissionRequest:
+                  (controller, origin, resources) async {
+                if (resources.contains(
+                    'android.webkit.resource.AUDIO_CAPTURE')) {
+                  await Permission.microphone.request();
+                }
+                if (resources.contains(
+                    'android.webkit.resource.VIDEO_CAPTURE')) {
+                  await Permission.camera.request();
+                }
+
+                return PermissionRequestResponse(
+                    resources: resources,
+                    action: PermissionRequestResponseAction.GRANT);
+              },
+
+              onProgressChanged: (controller, progress) {
+                if (progress == 100) {
+                  _pullToRefreshController.endRefreshing();
+                }
+                setState(() {
+                  this.progress = progress / 100;
+                });
+              },
+              shouldOverrideUrlLoading:
+                  (controller, navigationAction) async {
+                var url = navigationAction.request.url.toString();
+                var uri = Uri.parse(url);
+
+                if (Platform.isIOS && url.contains("geo")) {
+                  var newUrl = url.replaceFirst(
+                      'geo://', 'http://maps.apple.com/');
+
+                  if (await canLaunchUrl(Uri.parse(newUrl))) {
+                    await launch(newUrl);
+                    return NavigationActionPolicy.CANCEL;
+                  } else {
+                    throw 'Could not launch $newUrl';
+                  }
+                } else if (url.contains("tel:") ||
+                    url.contains("mailto:") ||
+                    url.contains("play.google.com") ||
+                    url.contains("maps") ||
+                    url.contains("messenger.com")) {
+                  url = Uri.encodeFull(url);
+                  try {
+                    if (await canLaunchUrl(uri)) {
+                      launchUrl(uri);
+                    } else {
+                      launchUrl(uri);
+                    }
+                    return NavigationActionPolicy.CANCEL;
+                  } catch (e) {
+                    launchUrl(uri);
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                } else if (![
+                  "http",
+                  "https",
+                  "file",
+                  "chrome",
+                  "data",
+                  "javascript",
+                  "about"
+                ].contains(uri.scheme)) {
+                  if (await canLaunchUrl(uri)) {
+                    // Launch the App
+                    await launchUrl(
+                      uri,
+                    );
+                    // and cancel the request
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                }
+
+                return NavigationActionPolicy.ALLOW;
+              },
+
+              onDownloadStartRequest:
+                  (controller, downloadStartRrquest) async {
+                requestPermission().then((status) async {
+                  String url = downloadStartRrquest.url.toString();
+                  print(url.toString());
+                  if (status == true) {
+                    try {
+                      Dio dio = Dio();
+                      String dirloc = '';
+                      if (Platform.isAndroid) {
+                        dirloc = (await getExternalStorageDirectory())!.path;
+                      } else if (Platform.isIOS) {
+                        dirloc = (await getApplicationDocumentsDirectory()).path;
+                      }
+                      print(dirloc);
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(
+                        content: const Text('Downloading file..'),
+                      ));
+                      try {
+                        String downloadName = "sample";
+                        String fullPath = '$dirloc/$downloadName.pdf';
+                        String fileSaved = '$dirloc/$downloadName.pdf/';
+                        FileUtils.mkdir([fullPath]);
+                        print(fullPath);
+                        await dio.download(
+                            url, fileSaved ,
+                            onReceiveProgress: (receivedBytes, totalBytes) async {
+                              received = ((receivedBytes / totalBytes) * 100);
+                              setState(() {
+                                progress =
+                                (((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + '%') as double;
+                              });
+
+                              if (received == 100.0) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('Files has been downloaded to $fileSaved'),
+                                ));
+
+                                // if (url.contains('.pdf')) {
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => DownloadViewer(
+                                //         title: title!,
+                                //         filePath: InfixApi().root + url,
+                                //       ),
+                                //     ),
+                                //   );
+                                // } else if (url.contains('.jpg') ||
+                                //     url.contains('.png') ||
+                                //     url.contains('.jpeg')) {
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => Utils.documentViewer(InfixApi().root + url, context),
+                                //     ),
+                                //   );
+                                // }
+                                // else {
+                                //   Utils.showToast('No file exists');
+                                //   // var file = await DefaultCacheManager()
+                                //   //     .getSingleFile(InfixApi().root + url);
+                                //   // // OpenFile.open(file.path);
+                                //   // Navigator.push(
+                                //   //   context,
+                                //   //   MaterialPageRoute(
+                                //   //     builder: (context) => Utils.fullScreenImageView(file.path),
+                                //   //   ),
+                                //   // );
+                                // }
+                              }
+                            });
+                      } catch (e) {
+                        print(e);
+                      }
+                      //     File file = File(url.toString());
+                      //     String fileName = url.toString().substring(
+                      //         url.toString().lastIndexOf('/') + 1,
+                      //         url.toString().lastIndexOf('?'));
+                      //
+                      //     String savePath = await getFilePath(fileName);
+                      //     print(savePath);
+                      //     ScaffoldMessenger.of(context)
+                      //         .showSnackBar(SnackBar(
+                      //       content: const Text('Downloading file..'),
+                      //     ));
+                      //     await dio.download(url.toString(), savePath,
+                      //         onReceiveProgress: (rec, total) {
+                      //       // _bottomSheetController.setState!(() {
+                      //       //   downloading = true;
+                      //       //   progress = (rec / total);
+                      //       //   downloadingStr = downloadingStartString;
+                      //       // });
+                      //     });
+                      //
+                      //     ScaffoldMessenger.of(context)
+                      //         .showSnackBar(SnackBar(
+                      //       content: const Text('Download Complete'),
+                      //     ));
+                    } on Exception catch (e) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(
+                        content: const Text('Downloading failed'),
+                      ));
+                    }
+                    //   // if (await canLaunchUrl(url)) {
+                    //   //   // Launch the App
+                    //   //   await launchUrl(url,
+                    //   //       mode: LaunchMode.platformDefault);
+                    //
+                    //   //   // and cancel the request
+                    //   // }
+                    // } else {
+                    //   ScaffoldMessenger.of(context)
+                    //       .showSnackBar(SnackBar(
+                    //     content: const Text('Permision denied'),
+                    //   ));
+                    // }
+                  }});
+              },
+              onUpdateVisitedHistory:
+                  (controller, url, androidIsReload) {
+                print('--from onUpdateVisitedHistory--$url');
+
+                // setState(() {
+                //   this.url = url.toString();
+                // });
+              },
+              onCloseWindow: (controller) async {
+                //   _webViewController!.evaluateJavascript(source:'document.cookie = "token=$token"');
+              },
+              onConsoleMessage: (controller, message) {
+                print('---console---$message');
+              },
+            )
+                : Center(
+                child: Text(
+                  'Url is not valid',
+                  style: Theme.of(context).textTheme.subtitle1,
+                )),
+            isLoading
+                ? Center(
+              child: CircularProgressIndicator(),
+            )
+                : SizedBox(height: 0, width: 0),
+            noInternet
+                ? Center(
+              child: NoInternetWidget(),
+            )
+                : SizedBox(height: 0, width: 0),
+            showErrorPage
+                ? Center(
+                child: NotFound(
+                    _webViewController!,
+                    url,
+                    CustomStrings.pageNotFound1,
+                    CustomStrings.pageNotFound2))
+                : SizedBox(height: 0, width: 0),
+            slowInternetPage
+                ? Center(
+                child: NotFound(
+                    _webViewController!,
+                    url,
+                    CustomStrings.incorrectURL1,
+                    CustomStrings.incorrectURL2))
+                : SizedBox(height: 0, width: 0),
+            progress < 1.0
+                ? SizeTransition(
+              sizeFactor: animation,
+              axis: Axis.horizontal,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 5.0,
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent
+                  // gradient: LinearGradient(
+                  //   colors: [
+                  //     Theme.of(context).progressIndicatorTheme.color!,
+                  //     Theme.of(context)
+                  //         .progressIndicatorTheme
+                  //         .refreshBackgroundColor!,
+                  //     Theme.of(context)
+                  //         .progressIndicatorTheme
+                  //         .linearTrackColor!,
+                  //   ],
+                  //   stops: const [0.1, 1.0, 0.1],
+                  // ),
+                ),
               ),
-            ),
-          )
-              : Container(),
-        ],
+            )
+                : Container(),
+          ],
+        ),
       ),
     );
   }
